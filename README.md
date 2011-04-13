@@ -1,15 +1,15 @@
-== dropTo ==
+dropTo
 
 A simple plugin for jQuery, helps you to drop element relatively to 
 another element.
 
-== Usage ==
+## Usage ##
 
 Drop element A to the left side of element B
 
 `$(A).dropTo(b).outerLeft()`
 
-== API Reference ==
+## API Reference ##
 
 `dropTo(<jQuery Object>el)` Specify the relative element.
 
@@ -69,7 +69,7 @@ element.
     `offset` Horizontal offset, positive number 
     to move right.
 
-== TODO ==
+## TODO ##
 
 `include(<jQuery Object>el)` include an element's rectangle area into 
 calculation.
