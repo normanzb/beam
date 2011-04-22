@@ -32,7 +32,10 @@ target - the object of reference for positioning.
         // we'd better not change the hierachical structure of dom, 
         // if el and target don't share same parent,
         // we need to caculate the position diff between them
-        if (el.parent().get(0) == settings.target.parent().get(0))
+        if (el.parent().get(0) == settings.target.parent().get(0) &&
+            // temporary fix for jQuery bug 8945
+            // http://bugs.jquery.com/ticket/8945
+            $.browser.webkit == null)
             offset = settings.target.position();
         else{
             var diff = { 
@@ -67,6 +70,15 @@ target - the object of reference for positioning.
     function setBidiLeft(el, left, offset){
     
         var parent = el.offsetParent();
+
+        // if offsetparent is body and it is a non-positioned element
+        // that means the positioning element is <html />
+        if (parent.attr('tagName').toUpperCase() == 'BODY' &&
+            !(/absolute|relative|fixed/i.test(parent.css('position')))){
+            parent = $(document.documentElement);
+        }
+            
+
         if (parent.length <= 0 || el.css('direction') != 'ltr'){
             // right to left layout
             var right = parent.outerWidth() - left - el.outerWidth();
