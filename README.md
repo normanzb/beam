@@ -77,6 +77,8 @@ calculation.
 `exclude(<jQuery Object>el)` exclude an element's rectangle area from 
 calculation.
 
+Animation Supports
+
 ## Known Issue ##
 
 1. Positioning goes wrong when `<html />` or `<body />` has border width, this is due to the differnt returning value of offsetLeft/Top when there are border, even jQuery ignores the width of border in position().
