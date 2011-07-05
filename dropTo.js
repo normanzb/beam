@@ -1,3 +1,4 @@
+/*!require:*/
 /*
 JQueryPlugin: jQuery.fn.dropTo
 
@@ -10,7 +11,7 @@ Options:
 target - the object of reference for positioning.
 */
 (function($){
-    
+
     var dataKey = 'jQuery.fn.dropTo.Data';
     var defaultOptions = {
         target: null
@@ -29,7 +30,7 @@ target - the object of reference for positioning.
         var offset = null;
 
         el.css('position', 'absolute');
-        // we'd better not change the hierachical structure of dom, 
+        // we'd better not change the hierachical structure of dom,
         // if el and target don't share same parent,
         // we need to caculate the position diff between them
         if (el.parent().get(0) == settings.target.parent().get(0) &&
@@ -38,21 +39,21 @@ target - the object of reference for positioning.
             $.browser.webkit == null)
             offset = settings.target.position();
         else{
-            var diff = { 
-                left: settings.target.offset().left - 
-                    settings.target.position().left - 
+            var diff = {
+                left: settings.target.offset().left -
+                    settings.target.position().left -
                     (el.offset().left - el.position().left),
-                top:  settings.target.offset().top - 
-                    settings.target.position().top - 
+                top:  settings.target.offset().top -
+                    settings.target.position().top -
                     (el.offset().top - el.position().top)
             }
             offset = settings.target.position();
             offset.top += diff.top;
             offset.left += diff.left;
-            
+
             //el.appendTo(document.body);
         }
-    
+
 
         var data = {
             settings: settings,
@@ -61,46 +62,46 @@ target - the object of reference for positioning.
 
         el.data(dataKey, data);
     }
-    
+
     /**
      * @function setBidiLeft Set the css('left') by default, but if it is in a rtl element,
      * will calculate corresponding 'right distance' and user css('right') instead of left.
      * @private
      */
     function setBidiLeft(el, left, offset){
-    
+
         var parent = el.offsetParent();
 
         // if offsetparent is body and it is a non-positioned element
         // that means the positioning element is <html />
-        if (parent.attr('tagName').toUpperCase() == 'BODY' &&
+        if (parent[0].tagName.toUpperCase() == 'BODY' &&
             !(/absolute|relative|fixed/i.test(parent.css('position')))){
             parent = $(document.documentElement);
         }
-            
+
 
         if (parent.length <= 0 || el.css('direction') != 'ltr'){
             // right to left layout
             var right = parent.outerWidth() - left - el.outerWidth();
-            
+
             if (offset != null && !isNaN(offset * 1)){
                 right -= offset;
             }
-            
+
             el.css('right', right);
         }
         else{
-            
+
             if (offset != null && !isNaN(offset * 1)){
                 left += offset;
             }
-            
+
             // left to right layout (default)
             el.css('left', left);
         }
     };
-    
-    /** 
+
+    /**
      * @function setTop Set css('top') and plus offset
      * @private
      */
@@ -110,7 +111,7 @@ target - the object of reference for positioning.
         }
         el.css('top', top);
     };
-    
+
     /**
      * @function curry Curry helper function, return a function that calls
      * 'func' and pass remaining arguments to 'func'.
@@ -139,7 +140,7 @@ target - the object of reference for positioning.
         var data = el.data(dataKey);
         if (data == null) return;
         var top = data.offset.top - el.outerHeight();
-        
+
         setTop(el, top, offset);
     };
 
@@ -158,7 +159,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var top = data.offset.top + target.outerHeight();
-        
+
         setTop(el, top, offset);
     }
 
@@ -168,7 +169,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var top = data.offset.top;
-        
+
         setTop(el, top, offset);
     }
 
@@ -180,7 +181,7 @@ target - the object of reference for positioning.
         var left = data.offset.left;
         setBidiLeft(el, left, offset);
     }
-    
+
     function insideRight(i, dom, offset){
         var el = $(dom);
         var data = el.data(dataKey);
@@ -196,7 +197,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var top = data.offset.top + target.outerHeight() - el.outerHeight();
-        
+
         setTop(el, top, offset);
     }
 
@@ -215,7 +216,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var top = data.offset.top + (target.outerHeight() - el.outerHeight()) / 2;
-        
+
         setTop(el, top, offset);
     }
 
