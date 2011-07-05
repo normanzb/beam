@@ -68,7 +68,7 @@ target - the object of reference for positioning.
      * will calculate corresponding 'right distance' and user css('right') instead of left.
      * @private
      */
-    function setBidiLeft(el, left, offset){
+    function setBidiLeft(el, left, offset, animOptions){
 
         var parent = el.offsetParent();
 
@@ -105,13 +105,27 @@ target - the object of reference for positioning.
      * @function setTop Set css('top') and plus offset
      * @private
      */
-    function setTop(el, top, offset){
+    function setTop(el, top, offset, animOptions){
         if (offset != null && !isNaN(offset * 1)){
             top += offset;
         }
-        el.css('top', top);
+
+        if (!animOptions){
+            el.css('top', top);
+        }
+        else{
+            if (animOptions === true){
+                animOptions = {};
+            }
+            el.animate({
+                top: top
+            }, animOptions);
+        }
     };
 
+    /**
+     * Helpers
+     **/
     /**
      * @function curry Curry helper function, return a function that calls
      * 'func' and pass remaining arguments to 'func'.
@@ -127,12 +141,29 @@ target - the object of reference for positioning.
         };
     };
 
+    function callInnerFunc(context, innerFunc, outerArguments){
+        var args = [];
+        args.push(innerFunc);
+        args.concat(outerArguments);
+        return context.each(curry.apply(this, args));
+    };
+
+    function innerFuncArgumentConcater(funcToCall, args, outerArguments, amongToRemove){
+        var outerArgs = Array.prototype.slice.call(outerArguments);
+
+        outerArgs.splice(0,amongToRemove);
+        args.concat(outerArgs);
+
+        funcToCall.apply(this, args);
+    };
+
     function left(i, dom, offset){
         var el = $(dom);
         var data = el.data(dataKey);
         if (data == null) return;
         var left = data.offset.left - el.outerWidth();
-        setBidiLeft(el, left, offset);
+
+        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
     };
 
     function top(i, dom, offset){
@@ -141,7 +172,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var top = data.offset.top - el.outerHeight();
 
-        setTop(el, top, offset);
+        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     };
 
     function right(i, dom, offset){
@@ -150,7 +181,8 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var left = data.offset.left + target.outerWidth();
-        setBidiLeft(el, left, offset);
+
+        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
     }
 
     function bottom(i, dom, offset){
@@ -159,8 +191,7 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var top = data.offset.top + target.outerHeight();
-
-        setTop(el, top, offset);
+        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     }
 
     function insideTop(i, dom, offset){
@@ -170,7 +201,7 @@ target - the object of reference for positioning.
         var target = data.settings.target;
         var top = data.offset.top;
 
-        setTop(el, top, offset);
+        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     }
 
     function insideLeft(i, dom, offset){
@@ -179,7 +210,8 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var left = data.offset.left;
-        setBidiLeft(el, left, offset);
+
+        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
     }
 
     function insideRight(i, dom, offset){
@@ -188,7 +220,8 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var left = data.offset.left + target.outerWidth() - el.outerWidth();
-        setBidiLeft(el, left, offset);
+
+        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
     }
 
     function insideBottom(i, dom, offset){
@@ -198,7 +231,7 @@ target - the object of reference for positioning.
         var target = data.settings.target;
         var top = data.offset.top + target.outerHeight() - el.outerHeight();
 
-        setTop(el, top, offset);
+        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     }
 
     function center(i, dom, offset){
@@ -207,7 +240,8 @@ target - the object of reference for positioning.
         if (data == null) return;
         var target = data.settings.target;
         var left = data.offset.left + (target.outerWidth() - el.outerWidth()) / 2;
-        setBidiLeft(el, left, offset);
+
+        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
     }
 
     function middle(i, dom, offset){
@@ -217,7 +251,7 @@ target - the object of reference for positioning.
         var target = data.settings.target;
         var top = data.offset.top + (target.outerHeight() - el.outerHeight()) / 2;
 
-        setTop(el, top, offset);
+        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     }
 
     $.fn.extend({
@@ -236,35 +270,40 @@ target - the object of reference for positioning.
             $.extend(settingsHolder, defaultOptions, options);
             return this.each(init);
         },
-        outerLeft: function(offset){
-            return this.each(curry(left, offset));
+        /*
+         * @function outerLeft, outerTop, outerRight, outerBottom...
+         * @param offset
+         * @param animationOptions
+         */
+        outerLeft: function(){
+            return callInnerFunc(this, left, arguments);
         },
-        outerTop: function(offset){
-            return this.each(curry(top, offset));
+        outerTop: function(){
+            return callInnerFunc(this, top, arguments);
         },
-        outerRight: function(offset){
-            return this.each(curry(right, offset));
+        outerRight: function(){
+            return callInnerFunc(this, right, arguments);
         },
-        outerBottom: function(offset){
-            return this.each(curry(bottom, offset));
+        outerBottom: function(){
+            return callInnerFunc(this, bottom, arguments);
         },
-        innerLeft: function(offset){
-            return this.each(curry(insideLeft, offset));
+        innerLeft: function(){
+            return callInnerFunc(this, insideLeft, arguments);
         },
-        innerTop: function(offset){
-            return this.each(curry(insideTop, offset));
+        innerTop: function(){
+            return callInnerFunc(this, insideTop, arguments);
         },
-        innerRight: function(offset){
-            return this.each(curry(insideRight, offset));
+        innerRight: function(){
+            return callInnerFunc(this, insideRight, arguments);
         },
-        innerBottom: function(offset){
-            return this.each(curry(insideBottom, offset));
+        innerBottom: function(){
+            return callInnerFunc(this, insideBottom, arguments);
         },
-        atCenter: function(offset){
-            return this.each(curry(center, offset));
+        atCenter: function(){
+            return callInnerFunc(this, center, arguments);
         },
-        atMiddle: function(offset){
-            return this.each(curry(middle, offset));
+        atMiddle: function(){
+            return callInnerFunc(this, middle, arguments);
         }
     });
 
