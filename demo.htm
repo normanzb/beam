@@ -52,7 +52,8 @@
     !function($){
         var clickCollection = {};
 
-        highlight = $('<div class="highlight"></div>');
+        window.highlight = $('<div class="highlight"></div>');
+
         $('.demoArea *:not(.highlight, .highlight-text)').live('click', function(evt){
             var el = $(this);
 
@@ -110,9 +111,27 @@
                 .innerLeft(0, {complete: startCachedAnimation});
 
     }
+
+    function startCachedAnimationWidthAdditionalAnimation(){
+        $('.highlight-text')
+            .dropTo({
+                target: '.highlight'
+            })
+                .innerTop(0, {dtDelay: true} )
+                .innerRight(0, true, {opacity: 0})
+                .innerBottom(0, {dtDelay: true} )
+                .innerLeft(0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
+
+    }
+
+    function stopAnimation(){
+        $('.highlight-text').stop(true, true);
+    }
 </script>
 <br /><br />
 <button onclick='startAnimation()'>Start animation</button>
 <button onclick='startCachedAnimation()'>Start delay animation</button>
+<button onclick='startCachedAnimationWidthAdditionalAnimation()'>Start delay animation with custom animation</button>
+<button onclick='stopAnimation()'>stop</button>
 </body>
 </html>

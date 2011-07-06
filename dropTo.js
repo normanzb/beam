@@ -69,7 +69,7 @@ target - the object of reference for positioning.
      * will calculate corresponding 'right distance' and user css('right') instead of left.
      * @private
      */
-    function setBidiLeft(el, left, offset, animOptions){
+    function setBidiLeft(el, left, offset, animOptions, additionalProp){
 
         var parent = el.offsetParent();
 
@@ -105,14 +105,14 @@ target - the object of reference for positioning.
             value = left;
         }
 
-        setTargetPos(el, cssProp, value, animOptions);
+        setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
 
     /**
      * @function setTop Set css('top') and plus offset
      * @private
      */
-    function setTop(el, top, offset, animOptions){
+    function setTop(el, top, offset, animOptions, additionalProp){
         var cssProp = 'left', value = 0;
 
         if (offset != null && !isNaN(offset * 1)){
@@ -122,15 +122,15 @@ target - the object of reference for positioning.
         cssProp = 'top';
         value = top;
 
-        setTargetPos(el, cssProp, value, animOptions);
+        setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
 
     /**
      * @function setTargetPos
      * set target position or move target to position with animation
      **/
-    function setTargetPos(el, cssProp, value, animOptions){
-        var animProp = {};
+    function setTargetPos(el, cssProp, value, animOptions, additionalProp){
+        var animProp = {}, dataOpts;
 
         if (!animOptions || animOptions === false){
             el.css(cssProp, value);
@@ -147,7 +147,12 @@ target - the object of reference for positioning.
                 if (el.data(dataKey).animCacheProp == null){
                     el.data(dataKey).animCacheProp = {};
                 }
-                el.data(dataKey).animCacheProp[cssProp] = value;
+                dataOpts = el.data(dataKey);
+                dataOpts.animCacheProp[cssProp] = value;
+                if (additionalProp){
+                    $.extend(dataOpts.animCacheProp, additionalProp);
+                }
+
             }
             else{
                 // if there are delayed animation
@@ -156,6 +161,9 @@ target - the object of reference for positioning.
                     el.data(dataKey).animCacheProp = null;
                 }
                 animProp[cssProp] = value;
+                if (additionalProp){
+                    $.extend(animProp, additionalProp);
+                }
 
                 el.animate(animProp, animOptions);
             }
@@ -305,7 +313,7 @@ target - the object of reference for positioning.
                 if (options == null){
                     options = {};
                 }
-                options.target = $(another);
+                options.target = another;
             }
             else {
                 options = another;
