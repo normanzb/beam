@@ -13,7 +13,7 @@ Drop element A to the left side of element B
 
 `dropTo(<jQuery Object>el)` Specify the relative element.
 
-`outerLeft(<Number>offset, <jQueryAnimationOption|true> option), <additionaljQueryAnimationProp> additionalProp` Drop element to the left side of the relative element.
+`outerLeft(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`) Drop element to the left side of the relative element.
 
     `offset` Horizontal offset, positive number
     to move right.
@@ -28,7 +28,7 @@ Drop element A to the left side of element B
      `additionalProp` additional custom animation properties
 
 
-`outerRight(<Number>offset)` Drop element to the right side of the relative element.
+`outerRight(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to the right side of the relative element.
 
     `offset` Horizontal offset, positive number
     to move right.
@@ -37,7 +37,7 @@ Drop element A to the left side of element B
 
     `additionalProp` same as the one in `outerLeft()`
 
-`outerTop(<Number>offset)` Drop element to the top of the relative element.
+`outerTop(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to the top of the relative element.
 
     `offset` Vertical offset, positive number
     to move bottom.
@@ -46,7 +46,7 @@ Drop element A to the left side of element B
 
     `additionalProp` same as the one in `outerLeft()`
 
-`outerBottom(<Number>offset)` Drop element to the bottom of the relative element.
+`outerBottom(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to the bottom of the relative element.
 
     `offset` Vertical offset, positive number
     to move bottom.
@@ -55,17 +55,7 @@ Drop element A to the left side of element B
 
     `additionalProp` same as the one in `outerLeft()`
 
-`innerLeft(<Number>offset)` Drop element to be aligned to the left edge
-of the relative element.
-
-    `offset` Horizontal offset, positive number
-    to move right.
-
-    `option` same as the one in `outerLeft()`
-
-    `additionalProp` same as the one in `outerLeft()`
-
-`innerRight(<Number>offset)` Drop element to be aligned to the right edge
+`innerLeft(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to be aligned to the left edge
 of the relative element.
 
     `offset` Horizontal offset, positive number
@@ -75,7 +65,17 @@ of the relative element.
 
     `additionalProp` same as the one in `outerLeft()`
 
-`innerTop(<Number>offset)` Drop element to be aligned to the top edge
+`innerRight(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to be aligned to the right edge
+of the relative element.
+
+    `offset` Horizontal offset, positive number
+    to move right.
+
+    `option` same as the one in `outerLeft()`
+
+    `additionalProp` same as the one in `outerLeft()`
+
+`innerTop(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to be aligned to the top edge
 of the relative element.
 
     `offset` Vertical offset, positive number
@@ -85,7 +85,7 @@ of the relative element.
 
     `additionalProp` same as the one in `outerLeft()`
 
-`innerBottom(<Number>offset)` Drop element to be aligned to the bottom edge
+`innerBottom(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Drop element to be aligned to the bottom edge
 of the relative element.
 
     `offset` Vertical offset, positive number
@@ -95,7 +95,7 @@ of the relative element.
 
     `additionalProp` same as the one in `outerLeft()`
 
-`atMiddle(<Number>offset)` Vertically drop element to the middle of the relative
+`atMiddle(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Vertically drop element to the middle of the relative
 element.
 
     `offset` Vertical offset, positive number
@@ -105,7 +105,7 @@ element.
 
     `additionalProp` same as the one in `outerLeft()`
 
-`atCenter(<Number>offset)` Horizontal drop element to the center of the relative
+`atCenter(<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`)` Horizontal drop element to the center of the relative
 element.
 
     `offset` Horizontal offset, positive number
