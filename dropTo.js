@@ -14,7 +14,8 @@ target - the object of reference for positioning.
 
     var dataKey = 'jQuery.fn.dropTo.Data';
     var defaultOptions = {
-        target: null
+        target: null,
+        animCacheProp: null
     };
 
     var settingsHolder = {};
@@ -72,6 +73,8 @@ target - the object of reference for positioning.
 
         var parent = el.offsetParent();
 
+        var cssProp = 'left', value = 0;
+
         // if offsetparent is body and it is a non-positioned element
         // that means the positioning element is <html />
         if (parent[0].tagName.toUpperCase() == 'BODY' &&
@@ -88,7 +91,8 @@ target - the object of reference for positioning.
                 right -= offset;
             }
 
-            el.css('right', right);
+            cssProp = 'right';
+            value = right;
         }
         else{
 
@@ -97,8 +101,11 @@ target - the object of reference for positioning.
             }
 
             // left to right layout (default)
-            el.css('left', left);
+            cssProp = 'left';
+            value = left;
         }
+
+        setTargetPos(el, cssProp, value, animOptions);
     };
 
     /**
@@ -106,22 +113,54 @@ target - the object of reference for positioning.
      * @private
      */
     function setTop(el, top, offset, animOptions){
+        var cssProp = 'left', value = 0;
+
         if (offset != null && !isNaN(offset * 1)){
             top += offset;
         }
 
-        if (!animOptions){
-            el.css('top', top);
+        cssProp = 'top';
+        value = top;
+
+        setTargetPos(el, cssProp, value, animOptions);
+    };
+
+    /**
+     * @function setTargetPos
+     * set target position or move target to position with animation
+     **/
+    function setTargetPos(el, cssProp, value, animOptions){
+        var animProp = {};
+
+        if (!animOptions || animOptions === false){
+            el.css(cssProp, value);
         }
         else{
             if (animOptions === true){
                 animOptions = {};
             }
-            el.animate({
-                top: top
-            }, animOptions);
+
+            // if animCache enabled, it means user wants to do all
+            // animation all together.
+            if (animOptions.dtDelay === true){
+                delete animOptions.dtDelay;
+                if (el.data(dataKey).animCacheProp == null){
+                    el.data(dataKey).animCacheProp = {};
+                }
+                el.data(dataKey).animCacheProp[cssProp] = value;
+            }
+            else{
+                // if there are delayed animation
+                if (el.data(dataKey).animCacheProp){
+                    animProp = el.data(dataKey).animCacheProp;
+                    el.data(dataKey).animCacheProp = null;
+                }
+                animProp[cssProp] = value;
+
+                el.animate(animProp, animOptions);
+            }
         }
-    };
+    }
 
     /**
      * Helpers
@@ -144,19 +183,23 @@ target - the object of reference for positioning.
     function callInnerFunc(context, innerFunc, outerArguments){
         var args = [];
         args.push(innerFunc);
-        args.concat(outerArguments);
-        return context.each(curry.apply(this, args));
+        var outerArgs = Array.prototype.slice.call(outerArguments);
+        args = args.concat(outerArgs);
+        return context.each(curry.apply(context, args));
     };
 
     function innerFuncArgumentConcater(funcToCall, args, outerArguments, amongToRemove){
         var outerArgs = Array.prototype.slice.call(outerArguments);
 
         outerArgs.splice(0,amongToRemove);
-        args.concat(outerArgs);
+        args = args.concat(outerArgs);
 
         funcToCall.apply(this, args);
     };
 
+    /**
+     * Targetting Methods
+     **/
     function left(i, dom, offset){
         var el = $(dom);
         var data = el.data(dataKey);
@@ -256,13 +299,13 @@ target - the object of reference for positioning.
 
     $.fn.extend({
         dropTo: function(another, options){
-            another = $(another);
-            // another can be option or jQuery obj
-            if (another.length != null && another.attr != null){
+            // another can be option or jQuery obj or jQuery selector
+            if (Object.prototype.toString.call(another).toLowerCase().indexOf('string') > 0 ||
+                another.length != null && another.attr != null){
                 if (options == null){
                     options = {};
                 }
-                options.target = another;
+                options.target = $(another);
             }
             else {
                 options = another;

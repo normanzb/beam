@@ -14,18 +14,9 @@
     .highlight-text {  background-color: #DBD9C8; border: 1px solid #000;}
     </style>
 <body>
+<div class='demoArea'>
+    <div class='nested-wrapper'>
 
-<div class='nested-wrapper'>
-
-    <div class='nested-fleft'>
-        float left
-    </div>
-
-    <div class='nested-fright'>
-        float right
-    </div>
-
-    <div class='nested-newformatcontext'>
         <div class='nested-fleft'>
             float left
         </div>
@@ -33,19 +24,28 @@
         <div class='nested-fright'>
             float right
         </div>
-    </div>
 
-    <div class='nested-relative'>
-        <div class='nested-fleft'>
-            float left
+        <div class='nested-newformatcontext'>
+            <div class='nested-fleft'>
+                float left
+            </div>
+
+            <div class='nested-fright'>
+                float right
+            </div>
         </div>
 
-        <div class='nested-fright'>
-            float right
+        <div class='nested-relative'>
+            <div class='nested-fleft'>
+                float left
+            </div>
+
+            <div class='nested-fright'>
+                float right
+            </div>
         </div>
     </div>
 </div>
-
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js'></script>
 <script src='./dropTo.js'></script>
 <script>
@@ -53,7 +53,7 @@
         var clickCollection = {};
 
         highlight = $('<div class="highlight"></div>');
-        $('*:not(.highlight, .highlight-text)').live('click', function(evt){
+        $('.demoArea *:not(.highlight, .highlight-text)').live('click', function(evt){
             var el = $(this);
 
             highlight
@@ -89,6 +89,30 @@
             highlight.appendTo(document.body).hide();
         });
     }(jQuery);
+
+    function startAnimation(){
+        $('.highlight-text')
+            .dropTo(highlight)
+                .innerBottom(0, true)
+                .innerRight(0, true)
+                .innerTop(0, true)
+                .innerLeft(0,{complete: startAnimation});
+    }
+
+    function startCachedAnimation(){
+        $('.highlight-text')
+            .dropTo({
+                target: highlight
+            })
+                .innerTop(0, {dtDelay: true})
+                .innerRight(0, true)
+                .innerBottom(0, {dtDelay: true})
+                .innerLeft(0, {complete: startCachedAnimation});
+
+    }
 </script>
+<br /><br />
+<button onclick='startAnimation()'>Start animation</button>
+<button onclick='startCachedAnimation()'>Start delay animation</button>
 </body>
 </html>
