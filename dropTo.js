@@ -70,7 +70,7 @@ target - the object of reference for positioning.
      * @private
      */
     function setBidiLeft(el, left, offset, animOptions, additionalProp){
-
+                
         var parent = el.offsetParent();
 
         var cssProp = 'left', value = 0;
@@ -104,6 +104,8 @@ target - the object of reference for positioning.
             cssProp = 'left';
             value = left;
         }
+        
+        value += getDocumentOffset(el).left;
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
@@ -121,6 +123,8 @@ target - the object of reference for positioning.
 
         cssProp = 'top';
         value = top;
+        
+        value += getDocumentOffset(el).top;
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
@@ -169,6 +173,83 @@ target - the object of reference for positioning.
             }
         }
     }
+    
+    /**
+     * @function getDocumentOffset
+     * 
+     */
+    function getDocumentOffset(source){
+        // get target and source element's ownedDocument
+        // if they are in different document
+        // the result will count in the offset of iframe 
+        var sourceDoc = source[0].ownerDocument,
+            target = source.data(dataKey).settings.target[0],
+            targetDoc = target.ownerDocument;
+            
+                
+        var frameOffset = {left:0, top:0}, 
+            parentWin, parentDoc, currentWin, elFound = false, tmp;
+
+        if (sourceDoc === targetDoc){
+            return frameOffset;
+        }
+        
+        // check if targetDoc is inside sourceDoc
+        // currently we dont support targetDoc is parent doc of sourceDoc
+        
+        currentWin = getDocWin(targetDoc);
+        parentDoc = getParentDoc(currentWin);
+        
+        do{
+            parentWin = getDocWin(parentDoc);
+            
+            elFound = null;
+            
+            // search for iframes
+            $(parentDoc).find('iframe').each(function(i, el){
+                try{
+                    if (el.contentWindow == currentWin){
+                        elFound = el;
+                        return false;
+                    }
+                }
+                catch(ex){
+                    if (window.console){
+                        window.console.log('' + ex.message);
+                    }
+                }
+            });
+            
+            // associated iframe found?
+            if (elFound){
+                tmp = $(elFound).offset();
+                frameOffset.left += tmp.left;
+                frameOffset.top += tmp.top;
+            }
+            else{
+                throw 'target element is not a sub window of current window';
+            }
+            
+            currentWin = parentWin;
+            parentDoc = getParentDoc(parentWin);
+        }
+        while(parentDoc);
+            
+        return frameOffset;
+    };
+    
+    /**
+     * @function getDocWin
+     * return the parentWindow of specified document object
+     */
+    function getDocWin(doc){
+        return doc.defaultView? doc.defaultView: doc.parentWindow;
+    };
+    
+    function getParentDoc(win){
+        
+        return (win.parent && win.parent != win)? win.parent.document:null;
+    };
 
     /**
      * Helpers
