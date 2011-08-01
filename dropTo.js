@@ -28,7 +28,7 @@ target - the object of reference for positioning.
 
         // make sure it is jquery obj
         settings.target = $(settings.target);
-        var offset = null;
+        var offset = null, frameOffset = {};
 
         el.css('position', 'absolute');
         // we'd better not change the hierachical structure of dom,
@@ -55,6 +55,10 @@ target - the object of reference for positioning.
             //el.appendTo(document.body);
         }
 
+        frameOffset = getDocumentOffset(el, settings.target);
+
+        offset.top += frameOffset.top;
+        offset.left += frameOffset.left;
 
         var data = {
             settings: settings,
@@ -70,7 +74,7 @@ target - the object of reference for positioning.
      * @private
      */
     function setBidiLeft(el, left, offset, animOptions, additionalProp){
-                
+
         var parent = el.offsetParent();
 
         var cssProp = 'left', value = 0;
@@ -104,8 +108,6 @@ target - the object of reference for positioning.
             cssProp = 'left';
             value = left;
         }
-        
-        value += getDocumentOffset(el).left;
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
@@ -123,8 +125,6 @@ target - the object of reference for positioning.
 
         cssProp = 'top';
         value = top;
-        
-        value += getDocumentOffset(el).top;
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
@@ -173,38 +173,37 @@ target - the object of reference for positioning.
             }
         }
     }
-    
+
     /**
      * @function getDocumentOffset
-     * 
+     *
      */
-    function getDocumentOffset(source){
+    function getDocumentOffset(source, target){
         // get target and source element's ownedDocument
         // if they are in different document
-        // the result will count in the offset of iframe 
+        // the result will count in the offset of iframe
         var sourceDoc = source[0].ownerDocument,
-            target = source.data(dataKey).settings.target[0],
-            targetDoc = target.ownerDocument;
-            
-                
-        var frameOffset = {left:0, top:0}, 
+            targetDoc = target[0].ownerDocument;
+
+
+        var frameOffset = {left:0, top:0},
             parentWin, parentDoc, currentWin, elFound = false, tmp;
 
         if (sourceDoc === targetDoc){
             return frameOffset;
         }
-        
+
         // check if targetDoc is inside sourceDoc
         // currently we dont support targetDoc is parent doc of sourceDoc
-        
+
         currentWin = getDocWin(targetDoc);
         parentDoc = getParentDoc(currentWin);
-        
+
         do{
             parentWin = getDocWin(parentDoc);
-            
+
             elFound = null;
-            
+
             // search for iframes
             $(parentDoc).find('iframe').each(function(i, el){
                 try{
@@ -219,7 +218,7 @@ target - the object of reference for positioning.
                     }
                 }
             });
-            
+
             // associated iframe found?
             if (elFound){
                 tmp = $(elFound).offset();
@@ -229,15 +228,15 @@ target - the object of reference for positioning.
             else{
                 throw 'target element is not a sub window of current window';
             }
-            
+
             currentWin = parentWin;
             parentDoc = getParentDoc(parentWin);
         }
         while(parentDoc);
-            
+
         return frameOffset;
     };
-    
+
     /**
      * @function getDocWin
      * return the parentWindow of specified document object
@@ -245,9 +244,9 @@ target - the object of reference for positioning.
     function getDocWin(doc){
         return doc.defaultView? doc.defaultView: doc.parentWindow;
     };
-    
+
     function getParentDoc(win){
-        
+
         return (win.parent && win.parent != win)? win.parent.document:null;
     };
 

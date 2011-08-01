@@ -13,7 +13,7 @@
     <input type='text' value='test' id='inputbox' />
     <span id='bubble' class='bubble2'>bubble on the left of input</span>
 </div>
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js'></script>
 <script src='../dropTo.js'></script>
 <script src='../lib/exportTo/exportTo.js'></script>
 <script>
@@ -24,10 +24,18 @@
         //var newNode = parent.document.adoptNode(elMsgBbl);
 
         //parent.document.body.appendChild(elMsgBbl)
-        msgBubble.appendTo(parent.document.body)
+        msgBubble
+            // below reset is because the shability of ie 9 http://t.cn/aY15S3
+            // and it cause jQuery.position and outerWidth(true) work unexpectedly
+            // http://t.cn/aY15SB
+            .css('marginTop', '0px')
+
+            // move it to document body
+            .appendTo(parent.document.body).show();
         //dropTo('inputbox')
 
         msgBubble.dropTo($('input')).outerRight(0, true).outerTop(0, true);
+
     });
 </script>
 </body>
