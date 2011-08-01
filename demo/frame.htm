@@ -18,21 +18,22 @@
 <script src='../lib/exportTo/exportTo.js'></script>
 <script>
     $(function(){
-        var msgBubble = $('#bubble').embedCSS().exportTo(parent, true)
-            .end().remove();
+        var msgBubble = $('#bubble').embedCSS().exportTo(parent, true);
+        msgBubble.end().remove();
         //var elMsgBbl = msgBubble[0];
         //var newNode = parent.document.adoptNode(elMsgBbl);
 
         //parent.document.body.appendChild(elMsgBbl)
+
         msgBubble
             // below reset is because the shability of ie 9 http://t.cn/aY15S3
             // and it cause jQuery.position and outerWidth(true) work unexpectedly
             // http://t.cn/aY15SB
-            .css('marginTop', '0px')
+            .css('marginTop', 0).show()
 
             // move it to document body
-            .appendTo(parent.document.body).show();
-        //dropTo('inputbox')
+            .appendTo(parent.document.body);
+
 
         msgBubble.dropTo($('input')).outerRight(0, true).outerTop(0, true);
 
