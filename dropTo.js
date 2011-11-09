@@ -10,7 +10,7 @@ Usage:
 Options:
 target - the object of reference for positioning.
 */
-(function($){
+(function($, etui){
 
     var dataKey = 'jQuery.fn.dropTo.Data';
     var defaultOptions = {
@@ -385,7 +385,7 @@ target - the object of reference for positioning.
         innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
     }
 
-    $.fn.extend({
+    var exports = {
         dropTo: function(another, options){
             // another can be option or jQuery obj or jQuery selector
             if (Object.prototype.toString.call(another).toLowerCase().indexOf('string') > 0 ||
@@ -436,6 +436,13 @@ target - the object of reference for positioning.
         atMiddle: function(){
             return callInnerFunc(this, middle, arguments);
         }
-    });
+    };
 
-})(jQuery);
+    $.fn.extend(exports);
+
+    // add etui support
+    if (etui && etui.$ && !(etui.$.fn.dropTo)){
+        etui.$.extend(exports);
+    }
+
+})(window.jQuery, window.etui);
