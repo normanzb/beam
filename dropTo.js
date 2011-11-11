@@ -387,13 +387,20 @@ target - the object of reference for positioning.
 
     var exports = {
         dropTo: function(another, options){
+            if (options == null){
+                options = {};
+            }
+
             // another can be option or jQuery obj or jQuery selector
             if (Object.prototype.toString.call(another).toLowerCase().indexOf('string') > 0 ||
                 another.length != null && another.attr != null){
-                if (options == null){
-                    options = {};
-                }
+                
                 options.target = another;
+            }
+            // it could also be a native element
+            else if(another.tagName != null && another.tagName != false){
+
+                options.target = $(another);
             }
             else {
                 options = another;
