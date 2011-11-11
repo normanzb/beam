@@ -449,7 +449,7 @@ target - the object of reference for positioning.
 
     // add etui support
     if (etui && etui.$ && !(etui.$.fn.dropTo)){
-        etui.$.extend(exports);
+        etui.$.fn.extend(exports);
     }
 
 })(window.jQuery, window.etui);
