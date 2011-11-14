@@ -13,7 +13,7 @@ Drop element A to the left side of element B
 
 ###Targetting API:###
 
-`dropTo(<jQuery Object>el)` Specify the relative element.
+`dropTo(<jQuery Object>el)` Specify the targetting element, source element will be dropped to a position with respect to the target element.
 
 ###Dropping API###
 
@@ -33,7 +33,7 @@ Drop API usage:
 
      `additionalProp` additional custom animation properties
 
-Drop API Table:
+Drop API list:
 
 outerLeft
 
