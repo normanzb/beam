@@ -9,13 +9,15 @@ Usage:
 
 Options:
 target - the object of reference for positioning.
+enableMargin - true to offset the element according to the css margin
 */
 (function($, etui){
 
     var dataKey = 'jQuery.fn.dropTo.Data';
     var defaultOptions = {
         target: null,
-        animCacheProp: null
+        animCacheProp: null,
+        enableMargin: false
     };
 
     var settingsHolder = {};
@@ -75,7 +77,8 @@ target - the object of reference for positioning.
      */
     function setBidiLeft(el, left, offset, animOptions, additionalProp){
 
-        var parent = el.offsetParent();
+        var parent = el.offsetParent(),
+            data = el.data(dataKey);
 
         var cssProp = 'left', value = 0;
 
@@ -97,6 +100,10 @@ target - the object of reference for positioning.
 
             cssProp = 'right';
             value = right;
+
+            if (data.settings.enableMargin){
+                value += parseInt(el.css('marginRight'));
+            }
         }
         else{
 
@@ -107,6 +114,10 @@ target - the object of reference for positioning.
             // left to right layout (default)
             cssProp = 'left';
             value = left;
+
+            if (data.settings.enableMargin){
+                value += parseInt(el.css('marginLeft'));
+            }
         }
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
@@ -117,7 +128,8 @@ target - the object of reference for positioning.
      * @private
      */
     function setTop(el, top, offset, animOptions, additionalProp){
-        var cssProp = 'left', value = 0;
+        var cssProp = 'left', value = 0,
+            data = el.data(dataKey);
 
         if (offset != null && !isNaN(offset * 1)){
             top += offset;
@@ -125,6 +137,10 @@ target - the object of reference for positioning.
 
         cssProp = 'top';
         value = top;
+
+        if (data.settings.enableMargin){
+            value += parseInt(el.css('marginTop'));
+        }
 
         setTargetPos(el, cssProp, value, animOptions, additionalProp);
     };
