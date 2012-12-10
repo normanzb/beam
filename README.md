@@ -1,7 +1,6 @@
 dropTo
 
-A simple plugin for jQuery, helps you to drop element to a position which respect to
-another element.
+Position element with respect to another element.
 
 ## Usage ##
 
