@@ -1,0 +1,16 @@
+{
+  "name": "drop",
+  "version": "0.0.1",
+  "main": "drop.js",
+  "devDependencies": {
+    "requirejs": "~2.1.8",
+    "grunt": "~0.4.1",
+    "grunt-bumpup": "~0.2.0",
+    "grunt-contrib-requirejs": ">= 0.3.0",
+    "grunt-contrib-uglify": ">= 0",
+    "grunt-tagrelease": "~0.2.0"
+  },
+  "scripts": {
+    "postinstall": "bower install"
+  }
+}
