@@ -1,4 +1,4 @@
-dropTo
+#dropTo
 
 Position element with respect to another element.
 
@@ -6,13 +6,13 @@ Position element with respect to another element.
 
 Drop element A to the left side of element B
 
-`$(A).dropTo(b).outerLeft()`
+`$(A).drop().to(b).outerLeft()`
 
 ## API Reference ##
 
 ###Targetting API:###
 
-`dropTo(<jQuery Object>el)` Specify the targetting element, source element will be dropped to a position with respect to the target element.
+`to(<jQuery Object>el)` Specify the targetting element, source element will be dropped to a position with respect to the target element.
 
 ###Dropping API###
 

@@ -5,15 +5,20 @@ JQueryPlugin: jQuery.fn.dropTo
 Drop an element relatively to another element.
 
 Usage:
-    $(eleA).dropTo(eleB).left()
+    $(eleA).drop().to(eleB).at('left top bottom ... ');
 
 Options:
 target - the object of reference for positioning.
 enableMargin - true to offset the element according to the css margin
 */
-(function($, etui){
+(function($){
 
-    var dataKey = 'jQuery.fn.dropTo.Data';
+    var KEY_DATA = 'jQuery.fn.dropTo.Data';
+    var KEY_INSTANCE = 'jQuery.fn.dropTo.instance';
+    var DEF_MODIFIER = 'inner';
+    var MODIFIER = {'outer':1, 'inner':2 };
+    var POSITION = {'middle':1, 'center':2, 'left':4, 'right':8, 'bottom':16, 'top':32};
+
     var defaultOptions = {
         target: null,
         animCacheProp: null,
@@ -23,38 +28,56 @@ enableMargin - true to offset the element according to the css margin
     var settingsHolder = {};
 
     function init(i, dom){
-        var el = $(dom);
+        var el = $(dom),
+            settings = {}, 
+            offset = null, 
+            diff = null, 
+            data,
+            frameOffset = {}, 
+            origPos, 
+            origData,
+            elMarginLeft,
+            elMarginTop,
+            targetMarginLeft,
+            targetMarginTop;
 
-        var settings = {};
         $.extend(settings, settingsHolder);
 
         // make sure it is jquery obj
         settings.target = $(settings.target);
-        var offset = null, frameOffset = {};
+
+        // get original position setting
+        origData = el.data(KEY_DATA);
+        origPos = origData && origData.position || el.css('position');
 
         el.css('position', 'absolute');
+
+        targetMarginLeft    = ( parseInt(settings.target.css('marginLeft')) >>> 0 );
+        targetMarginTop     = ( parseInt(settings.target.css('marginTop')) >>> 0 );
+        elMarginLeft        = ( parseInt(el.css('marginLeft')) >>> 0 );
+        elMarginTop         = ( parseInt(el.css('marginTop')) >>> 0);
+
         // we'd better not change the hierachical structure of dom,
         // if el and target don't share same parent,
         // we need to caculate the position diff between them
-        if (el.parent().get(0) == settings.target.parent().get(0) &&
-            // temporary fix for jQuery bug 8945
-            // http://bugs.jquery.com/ticket/8945
-            $.browser.webkit == null)
+        if ( el.parent().get(0) == settings.target.parent().get(0) ) {
             offset = settings.target.position();
-        else{
-            var diff = {
+            offset.left += targetMarginLeft;
+            offset.top += targetMarginTop;
+        }
+        else {
+            diff = {
                 left: settings.target.offset().left -
-                    settings.target.position().left -
-                    (el.offset().left - el.position().left),
+                    settings.target.position().left - targetMarginLeft -
+                    (el.offset().left - el.position().left ),
                 top:  settings.target.offset().top -
-                    settings.target.position().top -
-                    (el.offset().top - el.position().top)
-            }
+                    settings.target.position().top - targetMarginTop - 
+                    (el.offset().top - el.position().top )
+            };
+
             offset = settings.target.position();
             offset.top += diff.top;
             offset.left += diff.left;
-
-            //el.appendTo(document.body);
         }
 
         frameOffset = getDocumentOffset(el, settings.target);
@@ -62,12 +85,13 @@ enableMargin - true to offset the element according to the css margin
         offset.top += frameOffset.top;
         offset.left += frameOffset.left;
 
-        var data = {
+        data = {
             settings: settings,
-            offset: offset
+            offset: offset,
+            position: origPos 
         };
 
-        el.data(dataKey, data);
+        el.data(KEY_DATA, data);
     }
 
     /**
@@ -78,7 +102,7 @@ enableMargin - true to offset the element according to the css margin
     function setBidiLeft(el, left, offset, animOptions, additionalProp){
 
         var parent = el.offsetParent(),
-            data = el.data(dataKey);
+            data = el.data(KEY_DATA);
 
         var cssProp = 'left', value = 0;
 
@@ -129,7 +153,7 @@ enableMargin - true to offset the element according to the css margin
      */
     function setTop(el, top, offset, animOptions, additionalProp){
         var cssProp = 'left', value = 0,
-            data = el.data(dataKey);
+            data = el.data(KEY_DATA);
 
         if (offset != null && !isNaN(offset * 1)){
             top += offset;
@@ -164,10 +188,10 @@ enableMargin - true to offset the element according to the css margin
             // animation all together.
             if (animOptions.dtDelay === true){
                 delete animOptions.dtDelay;
-                if (el.data(dataKey).animCacheProp == null){
-                    el.data(dataKey).animCacheProp = {};
+                if (el.data(KEY_DATA).animCacheProp == null){
+                    el.data(KEY_DATA).animCacheProp = {};
                 }
-                dataOpts = el.data(dataKey);
+                dataOpts = el.data(KEY_DATA);
                 dataOpts.animCacheProp[cssProp] = value;
                 if (additionalProp){
                     $.extend(dataOpts.animCacheProp, additionalProp);
@@ -176,9 +200,9 @@ enableMargin - true to offset the element according to the css margin
             }
             else{
                 // if there are delayed animation
-                if (el.data(dataKey).animCacheProp){
-                    animProp = el.data(dataKey).animCacheProp;
-                    el.data(dataKey).animCacheProp = null;
+                if (el.data(KEY_DATA).animCacheProp){
+                    animProp = el.data(KEY_DATA).animCacheProp;
+                    el.data(KEY_DATA).animCacheProp = null;
                 }
                 animProp[cssProp] = value;
                 if (additionalProp){
@@ -269,28 +293,6 @@ enableMargin - true to offset the element according to the css margin
     /**
      * Helpers
      **/
-    /**
-     * @function curry Curry helper function, return a function that calls
-     * 'func' and pass remaining arguments to 'func'.
-     * @private
-     */
-    function curry(func){
-        var args = Array.prototype.slice.apply(arguments);
-        args.shift();
-        return function(){
-            var innerArgs = Array.prototype.slice.apply(arguments);
-            innerArgs = innerArgs.concat(args);
-            return func.apply(this, innerArgs);
-        };
-    };
-
-    function callInnerFunc(context, innerFunc, outerArguments){
-        var args = [];
-        args.push(innerFunc);
-        var outerArgs = Array.prototype.slice.call(outerArguments);
-        args = args.concat(outerArgs);
-        return context.each(curry.apply(context, args));
-    };
 
     function innerFuncArgumentConcater(funcToCall, args, outerArguments, amongToRemove){
         var outerArgs = Array.prototype.slice.call(outerArguments);
@@ -302,107 +304,11 @@ enableMargin - true to offset the element according to the css margin
     };
 
     /**
-     * Targetting Methods
+     * Public methods
      **/
-    function left(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var left = data.offset.left - el.outerWidth();
 
-        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
-    };
-
-    function top(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var top = data.offset.top - el.outerHeight();
-
-        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
-    };
-
-    function right(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var left = data.offset.left + target.outerWidth();
-
-        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
-    }
-
-    function bottom(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var top = data.offset.top + target.outerHeight();
-        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
-    }
-
-    function insideTop(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var top = data.offset.top;
-
-        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
-    }
-
-    function insideLeft(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var left = data.offset.left;
-
-        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
-    }
-
-    function insideRight(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var left = data.offset.left + target.outerWidth() - el.outerWidth();
-
-        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
-    }
-
-    function insideBottom(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var top = data.offset.top + target.outerHeight() - el.outerHeight();
-
-        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
-    }
-
-    function center(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var left = data.offset.left + (target.outerWidth() - el.outerWidth()) / 2;
-
-        innerFuncArgumentConcater(setBidiLeft, [el, left], arguments, 2);
-    }
-
-    function middle(i, dom, offset){
-        var el = $(dom);
-        var data = el.data(dataKey);
-        if (data == null) return;
-        var target = data.settings.target;
-        var top = data.offset.top + (target.outerHeight() - el.outerHeight()) / 2;
-
-        innerFuncArgumentConcater(setTop, [el, top], arguments, 2);
-    }
-
-    var exports = {
-        dropTo: function(another, options){
+    var methods = {
+        to: function(another, options){
             if (options == null){
                 options = {};
             }
@@ -424,48 +330,168 @@ enableMargin - true to offset the element according to the css margin
             $.extend(settingsHolder, defaultOptions, options);
             return this.each(init);
         },
-        /*
-         * @function outerLeft, outerTop, outerRight, outerBottom...
-         * @param offset
-         * @param animationOptions
-         */
-        outerLeft: function(){
-            return callInnerFunc(this, left, arguments);
-        },
-        outerTop: function(){
-            return callInnerFunc(this, top, arguments);
-        },
-        outerRight: function(){
-            return callInnerFunc(this, right, arguments);
-        },
-        outerBottom: function(){
-            return callInnerFunc(this, bottom, arguments);
-        },
-        innerLeft: function(){
-            return callInnerFunc(this, insideLeft, arguments);
-        },
-        innerTop: function(){
-            return callInnerFunc(this, insideTop, arguments);
-        },
-        innerRight: function(){
-            return callInnerFunc(this, insideRight, arguments);
-        },
-        innerBottom: function(){
-            return callInnerFunc(this, insideBottom, arguments);
-        },
-        atCenter: function(){
-            return callInnerFunc(this, center, arguments);
-        },
-        atMiddle: function(){
-            return callInnerFunc(this, middle, arguments);
+        at: function(where){
+            var specs = where.split(' '),
+                target,
+                spec, 
+                modifier = DEF_MODIFIER,
+                left, top, 
+                data;
+
+            for( var i = 0; i < specs.length; i++ ) {
+                spec = specs[ i ];
+
+                if ( MODIFIER[spec] ) {
+                    modifier = spec;
+                }
+                else if ( POSITION[spec] ) {
+                    // start positioning according to spec
+                    data = this.data(KEY_DATA);
+                    target = data.settings.target;
+
+                    // something wrong with current element
+                    if ( data == null ) {
+                        continue;
+                    }
+
+                    if ( spec == "left" ) {
+
+                        // default to inner
+                        left = data.offset.left;
+
+                        if ( modifier == "outer" ) {
+                            left -= this.outerWidth();    
+                        }
+                    }
+                    else if ( spec == "right" ) {
+
+                        // default to outer
+                        left = data.offset.left + target.outerWidth();
+
+                        if ( modifier == "inner" ) {
+                            left -= this.outerWidth();
+                        }
+                    }
+                    else if ( spec == "top" ) {
+
+                        // default to inner
+                        top = data.offset.top;
+
+                        if ( modifier == "outer" ) {
+                            top -= this.outerHeight();
+                        }
+                    }
+                    else if ( spec == "bottom" ) {
+
+                        // default to outer
+                        top = data.offset.top + target.outerHeight();
+
+                        if ( modifier == "inner" ) {
+                            top -= this.outerHeight();
+                        }
+                    }
+                    else if ( spec == "center" ) {
+                        left = data.offset.left + (target.outerWidth() - this.outerWidth()) / 2;
+                    }
+                    else if ( spec = "middle" ) {
+                        top = data.offset.top + (target.outerHeight() - this.outerHeight()) / 2;
+                    }
+                    else {
+                        throw "code shouldn't reach here.";
+                    }
+
+                    if ( left != null ) {
+                        innerFuncArgumentConcater(setBidiLeft, [this, left], arguments, 1);
+                    }
+                    else if ( top != null ) {
+                        innerFuncArgumentConcater(setTop, [this, top], arguments, 1);
+                    }
+
+                    // clear up
+                    modifier = DEF_MODIFIER;
+                    left = null;
+                    top = null;
+                }
+                else {
+                    // the user is talking gibberish...
+                }
+            }
+
         }
     };
 
-    $.fn.extend(exports);
-
-    // add etui support
-    if (etui && etui.$ && !(etui.$.fn.dropTo)){
-        etui.$.fn.extend(exports);
+    /*
+     * Constructor: DropTo
+     */
+    function DropTo($ref) {
+        this.$ = $ref;
     }
 
-})(window.jQuery, window.etui);
+    !function(){
+        var dropToProto = DropTo.prototype;
+
+        // set up the members of DropTo
+        for ( var key in methods ) 
+        (function(key) {
+            dropToProto[ key ] = function() {
+                return methods[ key ].apply( this.$, arguments );
+            };
+        })(key);
+    }();
+
+    /*
+     * Constructor: DropToCollection
+     */
+    function DropToCollection($collection){
+        this.$ = $collection;
+
+        this.$.each(function(){
+            var $el = $(this);
+            var instance = new DropTo($el);
+
+            $el.data( KEY_INSTANCE, instance );
+        });
+    }
+
+    !function(){
+        var dropToProto = DropTo.prototype;
+        var collectionProto = DropToCollection.prototype;
+
+        // set up the members of DropToCollection
+        for ( var key in dropToProto ) 
+        (function(key) {
+            collectionProto[ key ] = function() {
+                var args = arguments;
+
+                this.$.each(function(){
+                    var $el = $(this);
+                    var instance = $el.data( KEY_INSTANCE );
+                    instance[ key ].apply( instance, args );
+                });
+
+                return this;
+            };
+        })(key);
+    }();
+
+    var pluginMethods = {
+        drop: function() {
+            return new DropToCollection(this);
+        },
+        undrop: function() {
+            var data = this.data( KEY_DATA );
+
+            this.removeData( KEY_INSTANCE );
+
+            // restore original position
+            this.css( 'position', data.position );
+
+            this.removeData( KEY_DATA );
+
+            return this;
+        }
+    };
+
+    $.fn.extend(pluginMethods);
+
+})(window.jQuery);
