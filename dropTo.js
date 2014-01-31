@@ -1,6 +1,6 @@
 /*!require:*/
 /*
-JQueryPlugin: jQuery.fn.dropTo
+JQueryPlugin: jQuery.fn.drop
 
 Drop an element relatively to another element.
 
@@ -13,8 +13,8 @@ enableMargin - true to offset the element according to the css margin
 */
 (function($){
 
-    var KEY_DATA = 'jQuery.fn.dropTo.Data';
-    var KEY_INSTANCE = 'jQuery.fn.dropTo.instance';
+    var KEY_DATA = 'jQuery.fn.drop.Data';
+    var KEY_INSTANCE = 'jQuery.fn.drop.instance';
     var DEF_MODIFIER = 'inner';
     var MODIFIER = {'outer':1, 'inner':2 };
     var POSITION = {'middle':1, 'center':2, 'left':4, 'right':8, 'bottom':16, 'top':32};
@@ -421,44 +421,44 @@ enableMargin - true to offset the element according to the css margin
     };
 
     /*
-     * Constructor: DropTo
+     * Constructor: Drop
      */
-    function DropTo($ref) {
+    function Drop($ref) {
         this.$ = $ref;
     }
 
     !function(){
-        var dropToProto = DropTo.prototype;
+        var dropProto = Drop.prototype;
 
-        // set up the members of DropTo
+        // set up the members of Drop
         for ( var key in methods ) 
         (function(key) {
-            dropToProto[ key ] = function() {
+            dropProto[ key ] = function() {
                 return methods[ key ].apply( this.$, arguments );
             };
         })(key);
     }();
 
     /*
-     * Constructor: DropToCollection
+     * Constructor: DroppableCollection
      */
-    function DropToCollection($collection){
+    function DroppableCollection($collection){
         this.$ = $collection;
 
         this.$.each(function(){
             var $el = $(this);
-            var instance = new DropTo($el);
+            var instance = new Drop($el);
 
             $el.data( KEY_INSTANCE, instance );
         });
     }
 
     !function(){
-        var dropToProto = DropTo.prototype;
-        var collectionProto = DropToCollection.prototype;
+        var dropProto = Drop.prototype;
+        var collectionProto = DroppableCollection.prototype;
 
-        // set up the members of DropToCollection
-        for ( var key in dropToProto ) 
+        // set up the members of DroppableCollection
+        for ( var key in dropProto ) 
         (function(key) {
             collectionProto[ key ] = function() {
                 var args = arguments;
@@ -476,7 +476,7 @@ enableMargin - true to offset the element according to the css margin
 
     var pluginMethods = {
         drop: function() {
-            return new DropToCollection(this);
+            return new DroppableCollection(this);
         },
         undrop: function() {
             var data = this.data( KEY_DATA );

@@ -1,4 +1,4 @@
-#dropTo
+#Drop
 
 Position element with respect to another element.
 
@@ -6,22 +6,21 @@ Position element with respect to another element.
 
 Drop element A to the left side of element B
 
-`$(A).drop().to(b).outerLeft()`
+`$(A).drop().to(B).at("outer left and middle")`
 
 ## API Reference ##
 
-###Targetting API:###
+###to
 
 `to(<jQuery Object>el)` Specify the targetting element, source element will be dropped to a position with respect to the target element.
 
-###Dropping API###
+###at
 
-Drop API usage:
+`at(<String>location, <Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`) Specify the location of current element (against targetting element).
 
-`[---dropAPI---](<Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`) Drop element to the left side of the relative element.
+    `location` could be: (vertical) middle, (horizontal) center, left, right, top, bottom, outer left, outer right, outer top...
 
-    `offset` Horizontal offset, positive number
-    to move right.
+    `offset` Offset
 
     `option` can be the `jQuery Animation Option` or just `true`,
      if specified, dropTo will invoke jQuery.fn.animate internally to
@@ -31,38 +30,6 @@ Drop API usage:
      later with the other animations.
 
      `additionalProp` additional custom animation properties
-
-Drop API list:
-
-outerLeft
-
-outerRight
-
-outerTop
-
-outerBottom
-
-innerLeft
-
-innerRight
-
-innerTop
-
-innerBottom
-
-atMiddle
-
-atCenter
-
-## TODO ##
-
-`include(<jQuery Object>el)` include an element's rectangle area into
-calculation.
-
-`exclude(<jQuery Object>el)` exclude an element's rectangle area from
-calculation.
-
-Animation Supports
 
 ## Known Issue ##
 
