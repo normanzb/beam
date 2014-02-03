@@ -31,6 +31,8 @@ Drop element A to the left side of element B
 
      `additionalProp` additional custom animation properties
 
+`end()` stop droping, return the original jQuery object.
+
 ## Known Issue ##
 
 1. Positioning goes wrong when `<html />` or `<body />` has border width, this is due to the differnt returning value of offsetLeft/Top when there are border, even jQuery ignores the width of border in position().

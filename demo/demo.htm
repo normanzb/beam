@@ -47,7 +47,7 @@
     </div>
 </div>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js'></script>
-<script src='../dropTo.js'></script>
+<script src='../drop.js'></script>
 <script>
     !function($){
         var clickCollection = {};
@@ -68,9 +68,9 @@
 
                 .show()
                 .appendTo(document.body)
-                .dropTo(el).atMiddle().atCenter()
+                .drop().to(el).at('middle center').end()
                     .find('.highlight-text')
-                    .dropTo(highlight).outerBottom().innerLeft();
+                    .drop().to(highlight).at('outer bottom inner left');
 
             evt.stopPropagation();
         });
@@ -93,34 +93,34 @@
 
     function startAnimation(){
         $('.highlight-text')
-            .dropTo(highlight)
-                .innerBottom(0, true)
-                .innerRight(0, true)
-                .innerTop(0, true)
-                .innerLeft(0,{complete: startAnimation});
+            .drop().to(highlight)
+                .at('inner bottom', 0, true)
+                .at('inner right', 0, true)
+                .at('inner top', 0, true)
+                .at('inner left', 0, {complete: startAnimation});
     }
 
     function startCachedAnimation(){
         $('.highlight-text')
-            .dropTo({
+            .drop().to({
                 target: highlight
             })
-                .innerTop(0, {dtDelay: true})
-                .innerRight(0, true)
-                .innerBottom(0, {dtDelay: true})
-                .innerLeft(0, {complete: startCachedAnimation});
+            .at('inner top', 0, {dtDelay: true})
+            .at('inner right', 0, true)
+            .at('inner bottom', 0, {dtDelay: true})
+            .at('inner left', 0, {complete: startCachedAnimation});
 
     }
 
     function startCachedAnimationWidthAdditionalAnimation(){
         $('.highlight-text')
-            .dropTo({
+            .drop().to({
                 target: '.highlight'
             })
-                .innerTop(0, {dtDelay: true} )
-                .innerRight(0, true, {opacity: 0})
-                .innerBottom(0, {dtDelay: true} )
-                .innerLeft(0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
+            .at('inner top', 0, {dtDelay: true})
+            .at('inner right', 0, true, {opacity: 0})
+            .at('inner bottom', 0, {dtDelay: true})
+            .at('inner left', 0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
 
     }
 

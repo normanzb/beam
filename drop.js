@@ -474,6 +474,10 @@ enableMargin - true to offset the element according to the css margin
         })(key);
     }();
 
+    DroppableCollection.prototype.end = function() {
+        return this.$;
+    };
+
     var pluginMethods = {
         drop: function() {
             return new DroppableCollection(this);
