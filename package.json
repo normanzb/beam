@@ -1,9 +1,9 @@
 {
   "name": "drop",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "main": "drop.js",
   "description": "Position element with respect to another element.",
-  "keywords": "position, positioning"
+  "keywords": "position positioning"
   "devDependencies": {
     "requirejs": "~2.1.8",
     "grunt": "~0.4.1",

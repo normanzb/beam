@@ -186,8 +186,8 @@ enableMargin - true to offset the element according to the css margin
 
             // if animCache enabled, it means user wants to do all
             // animation all together.
-            if (animOptions.dtDelay === true){
-                delete animOptions.dtDelay;
+            if (animOptions.delay === true){
+                delete animOptions.delay;
                 if (el.data(KEY_DATA).animCacheProp == null){
                     el.data(KEY_DATA).animCacheProp = {};
                 }

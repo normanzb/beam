@@ -7,14 +7,14 @@
             display: inline-block;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="http://localhost2/dropTo/demo/xdomain.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="./xdomain.css" media="all" />
 <body>
 <div class='demoArea'>
     <input type='text' value='test' id='inputbox' />
     <span id='bubble' class='bubble2'>bubble on the left of input</span>
 </div>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js'></script>
-<script src='../dropTo.js'></script>
+<script src='../drop.js'></script>
 <script src='../lib/exportTo/exportTo.js'></script>
 <script>
     $(function(){
@@ -35,7 +35,7 @@
             .appendTo(parent.document.body);
 
 
-        msgBubble.dropTo($('input')).outerRight(0, true).outerTop(0, true);
+        msgBubble.drop().to($('input')).at("outer right outer top", 0, { delay: true });
 
     });
 </script>

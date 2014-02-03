@@ -105,9 +105,9 @@
             .drop().to({
                 target: highlight
             })
-            .at('inner top', 0, {dtDelay: true})
+            .at('inner top', 0, {delay: true})
             .at('inner right', 0, true)
-            .at('inner bottom', 0, {dtDelay: true})
+            .at('inner bottom', 0, {delay: true})
             .at('inner left', 0, {complete: startCachedAnimation});
 
     }
@@ -117,9 +117,9 @@
             .drop().to({
                 target: '.highlight'
             })
-            .at('inner top', 0, {dtDelay: true})
+            .at('inner top', 0, {delay: true})
             .at('inner right', 0, true, {opacity: 0})
-            .at('inner bottom', 0, {dtDelay: true})
+            .at('inner bottom', 0, {delay: true})
             .at('inner left', 0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
 
     }

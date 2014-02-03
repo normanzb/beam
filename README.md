@@ -18,19 +18,17 @@ Drop element A to the left side of element B
 
 `at(<String>location, <Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`) Specify the location of current element (against targetting element).
 
-    `location` could be: (vertical) middle, (horizontal) center, left, right, top, bottom, outer left, outer right, outer top...
+    * `location` could be: (vertical) middle, (horizontal) center, left, right, top, bottom, outer left, outer right, outer top...
 
-    `offset` Offset
+    * `offset` Offset { left: 2222, top: 2222 }
 
-    `option` can be the `jQuery Animation Option` or just `true`,
-     if specified, dropTo will invoke jQuery.fn.animate internally to
-     move target to position with animation.
+    * `option` can be the `jQuery Animation Option` or just `true`, if specified, dropTo will invoke jQuery.fn.animate internally to move target to position with animation.
 
-     set `option.dtDelay = true` will delay current animation and do it
-     later with the other animations.
+        * set `option.dtDelay = true` will delay current animation and do it later with the other animations.
 
-     `additionalProp` additional custom animation properties
+    * `additionalProp` additional custom animation properties
 
+###end
 `end()` stop droping, return the original jQuery object.
 
 ## Known Issue ##
