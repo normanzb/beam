@@ -14,7 +14,7 @@
     <span id='bubble' class='bubble2'>bubble on the left of input</span>
 </div>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js'></script>
-<script src='../drop.js'></script>
+<script src='../beam.js'></script>
 <script src='../lib/exportTo/exportTo.js'></script>
 <script>
     $(function(){
@@ -35,7 +35,7 @@
             .appendTo(parent.document.body);
 
 
-        msgBubble.drop().to($('input')).at("outer right outer top", 0, { delay: true });
+        msgBubble.beam().to($('input')).at("outer right outer top", 0, { delay: true });
 
     });
 </script>

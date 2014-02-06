@@ -1,18 +1,18 @@
-#Drop
+#Beam
 
 Position element with respect to another element.
 
 ## Usage ##
 
-Drop element A to the left side of element B
+Move element A to the left side of element B
 
-`$(A).drop().to(B).at("outer left and middle")`
+`$(A).beam().to(B).at("outer left and middle")`
 
 ## API Reference ##
 
 ###to
 
-`to(<jQuery Object>el)` Specify the targetting element, source element will be dropped to a position with respect to the target element.
+`to(<jQuery Object>el)` Specify the targetting element, source element will be moved to a position with respect to the target element.
 
 ###at
 
@@ -22,14 +22,14 @@ Drop element A to the left side of element B
 
     * `offset` Offset { left: 2222, top: 2222 }
 
-    * `option` can be the `jQuery Animation Option` or just `true`, if specified, dropTo will invoke jQuery.fn.animate internally to move target to position with animation.
+    * `option` can be the `jQuery Animation Option` or just `true`, if specified, beam will invoke jQuery.fn.animate internally to move target to position with animation.
 
         * set `option.dtDelay = true` will delay current animation and do it later with the other animations.
 
     * `additionalProp` additional custom animation properties
 
 ###end
-`end()` stop droping, return the original jQuery object.
+`end()` stop beaming, return the original jQuery object.
 
 ## Known Issue ##
 

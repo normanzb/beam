@@ -1,11 +1,11 @@
 /*!require:*/
 /*
-JQueryPlugin: jQuery.fn.drop
+JQueryPlugin: jQuery.fn.beam
 
-Drop an element relatively to another element.
+Move an element relatively to another element.
 
 Usage:
-    $(eleA).drop().to(eleB).at('left top bottom ... ');
+    $(eleA).beam().to(eleB).at('left top bottom ... ');
 
 Options:
 target - the object of reference for positioning.
@@ -13,8 +13,8 @@ enableMargin - true to offset the element according to the css margin
 */
 (function($){
 
-    var KEY_DATA = 'jQuery.fn.drop.Data';
-    var KEY_INSTANCE = 'jQuery.fn.drop.instance';
+    var KEY_DATA = 'jQuery.fn.beam.data';
+    var KEY_INSTANCE = 'jQuery.fn.beam.instance';
     var DEF_MODIFIER = 'inner';
     var MODIFIER = {'outer':1, 'inner':2 };
     var POSITION = {'middle':1, 'center':2, 'left':4, 'right':8, 'bottom':16, 'top':32};
@@ -27,7 +27,7 @@ enableMargin - true to offset the element according to the css margin
 
     var settingsHolder = {};
 
-    function init(i, dom){
+    function dematerialize(i, dom){
         var el = $(dom),
             settings = {}, 
             offset = null, 
@@ -328,7 +328,7 @@ enableMargin - true to offset the element according to the css margin
                 options = another;
             }
             $.extend(settingsHolder, defaultOptions, options);
-            return this.each(init);
+            return this.each(dematerialize);
         },
         at: function(where){
             var specs = where.split(' '),
@@ -421,44 +421,44 @@ enableMargin - true to offset the element according to the css margin
     };
 
     /*
-     * Constructor: Drop
+     * Constructor: Transporter
      */
-    function Drop($ref) {
+    function Transporter($ref) {
         this.$ = $ref;
     }
 
     !function(){
-        var dropProto = Drop.prototype;
+        var transporterProto = Transporter.prototype;
 
-        // set up the members of Drop
+        // set up the members of Transporter
         for ( var key in methods ) 
         (function(key) {
-            dropProto[ key ] = function() {
+            transporterProto[ key ] = function() {
                 return methods[ key ].apply( this.$, arguments );
             };
         })(key);
     }();
 
     /*
-     * Constructor: DroppableCollection
+     * Constructor: TransporterCollection
      */
-    function DroppableCollection($collection){
+    function TransporterCollection($collection){
         this.$ = $collection;
 
         this.$.each(function(){
             var $el = $(this);
-            var instance = new Drop($el);
+            var instance = new Transporter($el);
 
             $el.data( KEY_INSTANCE, instance );
         });
     }
 
     !function(){
-        var dropProto = Drop.prototype;
-        var collectionProto = DroppableCollection.prototype;
+        var transporterProto = Transporter.prototype;
+        var collectionProto = TransporterCollection.prototype;
 
-        // set up the members of DroppableCollection
-        for ( var key in dropProto ) 
+        // set up the members of TransporterCollection
+        for ( var key in transporterProto ) 
         (function(key) {
             collectionProto[ key ] = function() {
                 var args = arguments;
@@ -474,15 +474,15 @@ enableMargin - true to offset the element according to the css margin
         })(key);
     }();
 
-    DroppableCollection.prototype.end = function() {
+    TransporterCollection.prototype.end = function() {
         return this.$;
     };
 
     var pluginMethods = {
-        drop: function() {
-            return new DroppableCollection(this);
+        beam: function() {
+            return new TransporterCollection(this);
         },
-        undrop: function() {
+        unbeam: function() {
             var data = this.data( KEY_DATA );
 
             this.removeData( KEY_INSTANCE );

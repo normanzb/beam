@@ -1,7 +1,7 @@
 {
-  "name": "drop",
-  "version": "2.1.0",
-  "main": "drop.js",
+  "name": "beam",
+  "version": "0.0.1",
+  "main": "beam.js",
   "description": "Position element with respect to another element.",
   "keywords": "position positioning"
   "devDependencies": {
