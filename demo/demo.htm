@@ -5,7 +5,7 @@
     body { padding: 20px; margin: 10px; }
     .highlight { border: 3px dotted #82C0D2; }
 
-    .nested-wrapper { height: 400px; width: 400px; background: blue; }
+    .nested-wrapper { height: 400px; width: 400px; background: blue; margin-left: 20px; }
     .nested-fleft { float: left; background: green; }
     .nested-fright { float: right; background: darkgreen; }
     .nested-relative { position: relative; background: yellow; height: 200px; width: 200px; left: 50px; top: 100px;}
@@ -46,7 +46,7 @@
         </div>
     </div>
 </div>
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js'></script>
 <script src='../beam.js'></script>
 <script>
     !function($){
@@ -54,7 +54,7 @@
 
         window.highlight = $('<div class="highlight"></div>');
 
-        $('.demoArea *:not(.highlight, .highlight-text)').live('click', function(evt){
+        $('html').on('click', '.demoArea *:not(.highlight, .highlight-text)', function(evt){
             var el = $(this);
 
             highlight
@@ -75,7 +75,7 @@
             evt.stopPropagation();
         });
 
-        $('.highlight').live('click', function(evt){
+        $('html').on('click', '.highlight', function(evt){
             var el = $(this);
             el.hide();
 

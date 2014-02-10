@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+    html 
+    {
+        direction: rtl;
+    }
+    body
+    {
+        border:none;
+        margin: 0;
+        padding: 50px;
+    }
+    .foo
+    {
+        background: yellow;
+        width: 30px;
+        height: 30px;
+        border: 3px solid red;
+
+        margin-right: 30px;
+    }
+    .foo > .foo
+    {
+        background: orange;
+    }
+    .bar 
+    {
+        background: lime;
+        width:20px;
+        height: 20px;
+    }
+    pre
+    {
+        margin: 100px 0;
+    }
+    </style>
+</head>
+<body>
+    <div class="foo">0</div>
+    <div class="foo">1
+        <div class="foo">2</div>
+        <div class="foo">3</div>
+    </div>
+    <div class="foo">4</div>
+    <div class="bar">0</div>
+    <div class="bar">1</div>
+    <div class="bar">2</div>
+    <div class="bar">3</div>
+    <div class="bar">4</div>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js'></script>
+    <script src='../beam.js'></script>
+    <script type="text/javascript" id="script">
+        $('.bar:eq(0)').beam().to('.foo:eq(0)').at('outer left middle');
+        $('.bar:eq(1)').beam().to('.foo:eq(1)').at('inner right middle');
+        $('.bar:eq(2)').beam().to('.foo:eq(2)').at('inner right inner top');
+        $('.bar:eq(3)').beam().to('.foo:eq(3)').at('outer right outer top');
+        $('.bar:eq(4)').beam().to('.foo:not(.foo > .foo):eq(2)').at('inner left inner bottom');
+    </script>
+    <script type="text/javascript">
+        document.write('<pre style="direction: ltr;">'+$('#script').html()+'</pre>')
+    </script>
+</body>
+</html>

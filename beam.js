@@ -9,7 +9,6 @@ Usage:
 
 Options:
 target - the object of reference for positioning.
-enableMargin - true to offset the element according to the css margin
 */
 (function($){
 
@@ -36,8 +35,6 @@ enableMargin - true to offset the element according to the css margin
             frameOffset = {}, 
             origPos, 
             origData,
-            elMarginLeft,
-            elMarginTop,
             targetMarginLeft,
             targetMarginTop;
 
@@ -54,24 +51,28 @@ enableMargin - true to offset the element according to the css margin
 
         targetMarginLeft    = ( parseInt(settings.target.css('marginLeft')) >>> 0 );
         targetMarginTop     = ( parseInt(settings.target.css('marginTop')) >>> 0 );
-        elMarginLeft        = ( parseInt(el.css('marginLeft')) >>> 0 );
-        elMarginTop         = ( parseInt(el.css('marginTop')) >>> 0);
+        targetMarginRight   = ( parseInt(settings.target.css('marginRight')) >>> 0 );
+        targetBorderLeft    = ( parseInt(settings.target.css('borderLeftWidth')) >>> 0 );
+        targetBorderTop     = ( parseInt(settings.target.css('borderTopWidth')) >>> 0 );
+        targetBorderRight   = ( parseInt(settings.target.css('borderRightWidth')) >>> 0 );
+        targetBorderBottom   = ( parseInt(settings.target.css('borderBottomWidth')) >>> 0 );
 
         // we'd better not change the hierachical structure of dom,
         // if el and target don't share same parent,
         // we need to caculate the position diff between them
         if ( el.parent().get(0) == settings.target.parent().get(0) ) {
             offset = settings.target.position();
+            // we don't have to consider RTL here, because offset always return left and top
             offset.left += targetMarginLeft;
             offset.top += targetMarginTop;
         }
         else {
             diff = {
                 left: settings.target.offset().left -
-                    settings.target.position().left - targetMarginLeft -
+                    settings.target.position().left -
                     (el.offset().left - el.position().left ),
                 top:  settings.target.offset().top -
-                    settings.target.position().top - targetMarginTop - 
+                    settings.target.position().top - 
                     (el.offset().top - el.position().top )
             };
 
@@ -88,18 +89,29 @@ enableMargin - true to offset the element according to the css margin
         data = {
             settings: settings,
             offset: offset,
-            position: origPos 
+            position: origPos,
+            margin: {
+                left: targetMarginLeft,
+                right: targetMarginRight,
+                top: targetMarginTop
+            },
+            border: {
+                left: targetBorderLeft,
+                top: targetBorderTop,
+                right: targetBorderRight,
+                bottom: targetBorderBottom
+            } 
         };
 
         el.data(KEY_DATA, data);
     }
 
     /**
-     * @function setBidiLeft Set the css('left') by default, but if it is in a rtl element,
+     * @function setLeft Set the css('left') by default, but if it is in a rtl element,
      * will calculate corresponding 'right distance' and user css('right') instead of left.
      * @private
      */
-    function setBidiLeft(el, left, offset, animOptions, additionalProp){
+    function setLeft(el, left, offset, animOptions, additionalProp){
 
         var parent = el.offsetParent(),
             data = el.data(KEY_DATA);
@@ -125,11 +137,11 @@ enableMargin - true to offset the element according to the css margin
             cssProp = 'right';
             value = right;
 
-            if (data.settings.enableMargin){
-                value += parseInt(el.css('marginRight'));
+            if ( data.settings.enableMargin ){
+                value += parseInt( el.css('marginRight') );
             }
         }
-        else{
+        else {
 
             if (offset != null && !isNaN(offset * 1)){
                 left += offset;
@@ -140,7 +152,7 @@ enableMargin - true to offset the element according to the css margin
             value = left;
 
             if (data.settings.enableMargin){
-                value += parseInt(el.css('marginLeft'));
+                value += parseInt( el.css('marginLeft') );
             }
         }
 
@@ -360,7 +372,10 @@ enableMargin - true to offset the element according to the css margin
                         left = data.offset.left;
 
                         if ( modifier == "outer" ) {
-                            left -= this.outerWidth();    
+                            left -= this.outerWidth();
+                        } 
+                        else {
+                            left += data.border.left;
                         }
                     }
                     else if ( spec == "right" ) {
@@ -369,7 +384,7 @@ enableMargin - true to offset the element according to the css margin
                         left = data.offset.left + target.outerWidth();
 
                         if ( modifier == "inner" ) {
-                            left -= this.outerWidth();
+                            left -= this.outerWidth() + data.border.right;
                         }
                     }
                     else if ( spec == "top" ) {
@@ -380,6 +395,9 @@ enableMargin - true to offset the element according to the css margin
                         if ( modifier == "outer" ) {
                             top -= this.outerHeight();
                         }
+                        else {
+                            top += data.border.top;
+                        }
                     }
                     else if ( spec == "bottom" ) {
 
@@ -387,7 +405,7 @@ enableMargin - true to offset the element according to the css margin
                         top = data.offset.top + target.outerHeight();
 
                         if ( modifier == "inner" ) {
-                            top -= this.outerHeight();
+                            top -= this.outerHeight() + data.border.bottom;
                         }
                     }
                     else if ( spec == "center" ) {
@@ -401,7 +419,7 @@ enableMargin - true to offset the element according to the css margin
                     }
 
                     if ( left != null ) {
-                        innerFuncArgumentConcater(setBidiLeft, [this, left], arguments, 1);
+                        innerFuncArgumentConcater(setLeft, [this, left], arguments, 1);
                     }
                     else if ( top != null ) {
                         innerFuncArgumentConcater(setTop, [this, top], arguments, 1);
