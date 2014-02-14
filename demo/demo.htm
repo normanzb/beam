@@ -3,9 +3,11 @@
     <style>
     html { direction: ltr; }
     body { padding: 20px; margin: 10px; }
+    .pane-control { visibility: hidden; margin: 20px auto; z-index: 1; position: relative; }
+    .demoArea {position: relative;height: 500px; width: 500px;background: #EFEFEF;}
     .highlight { border: 3px dotted #82C0D2; }
 
-    .nested-wrapper { height: 400px; width: 400px; background: blue; margin-left: 20px; }
+    .nested-wrapper { height: 400px; width: 400px; background: blue; margin-left: 20px; position: absolute; top: 0; left: 0; }
     .nested-fleft { float: left; background: green; }
     .nested-fright { float: right; background: darkgreen; }
     .nested-relative { position: relative; background: yellow; height: 200px; width: 200px; left: 50px; top: 100px;}
@@ -14,6 +16,128 @@
     .highlight-text {  background-color: #DBD9C8; border: 1px solid #000;}
     </style>
 <body>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js'></script>
+<script src='../beam.js'></script>
+<script>
+    var clickCollection = {};
+    var $selected = null;
+
+    $(function(){
+
+        $('.pane-control').css('visibility', 'visible').hide().fadeIn();
+        window.highlight = $('<div class="highlight"></div>');
+        highlight.appendTo(document.body).hide();
+    });
+
+    $('html').on('click', '.demoArea *:not(.highlight, .highlight-text)', function(evt){
+        var el = $(this);
+
+        $selected = el;
+
+        highlight
+            .detach()
+
+            .html('<div class="highlight-text">' + el.attr('class') + '</div>')
+            .css({
+                width: el.innerWidth(),
+                height: el.innerHeight()
+            })
+
+            .show()
+            .appendTo(document.body)
+            .beam().to(el).at('middle center').end()
+                .find('.highlight-text')
+                .beam().to(highlight).at('outer bottom inner left');
+
+        evt.stopPropagation();
+    });
+
+    $('html').on('click', '.highlight', function(evt){
+        var el = $(this);
+        el.hide();
+
+        var eventTarget = $(document.elementFromPoint(evt.pageX, evt.pageY));
+        eventTarget.trigger('click');
+
+        evt.stopPropagation();
+    });
+
+
+    function warmUp(func) {
+        if ( $selected == null ) {
+            alert('select an element before start.')
+            return;
+        }
+
+        stopAnimation();
+
+        func();
+    }
+
+    function startAnimation(){
+    
+        highlight.hide();
+        $selected
+            .beam().to($selected.parent())
+                .at('inner bottom', 0, true)
+                .at('inner right', 0, true)
+                .at('inner top', 0, true)
+                .at('inner left', 0, {complete: startAnimation});
+    }
+
+    function startCachedAnimation(){
+
+        highlight.hide();
+        $selected
+            .beam().to({
+                target: $selected.parent()
+            })
+            .at('inner top', 0, {delay: true})
+            .at('inner right', 0, true)
+            .at('inner bottom', 0, {delay: true})
+            .at('inner left', 0, {complete: startCachedAnimation});
+
+    }
+
+    function startCachedAnimationWidthAdditionalAnimation(){
+
+        highlight.hide();
+        $selected
+            .beam().to($selected.parent())
+            .at('inner top', 0, {delay: true})
+            .at('inner right', 0, true, {opacity: 0})
+            .at('inner bottom', 0, {delay: true})
+            .at('inner left', 0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
+
+    }
+
+    function stopAnimation(){
+        if ( $selected == null ) {
+            alert('select an element before click anything.')
+            return;
+        }
+
+        $selected.stop(true, false);
+    }
+
+    function resetElement() {
+        if ( $selected == null ) {
+            alert('select an element before click anything.')
+            return;
+        }
+
+        stopAnimation();
+
+        $selected.unbeam();
+    }
+</script>
+<div class="pane-control">
+    <button onclick='warmUp(startAnimation)'>Moving step by step</button>
+    <button onclick='warmUp(startCachedAnimation)'>Moving with bundled instructions</button>
+    <button onclick='warmUp(startCachedAnimationWidthAdditionalAnimation)'>Moving with custom effect</button>
+    <button onclick='stopAnimation()'>stop</button>
+    <button onclick='resetElement()'>reset</button>
+</div>
 <div class='demoArea'>
     <div class='nested-wrapper'>
 
@@ -46,92 +170,6 @@
         </div>
     </div>
 </div>
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js'></script>
-<script src='../beam.js'></script>
-<script>
-    !function($){
-        var clickCollection = {};
 
-        window.highlight = $('<div class="highlight"></div>');
-
-        $('html').on('click', '.demoArea *:not(.highlight, .highlight-text)', function(evt){
-            var el = $(this);
-
-            highlight
-                .detach()
-
-                .html('<div class="highlight-text">' + el.attr('class') + '</div>')
-                .css({
-                    width: el.innerWidth(),
-                    height: el.innerHeight()
-                })
-
-                .show()
-                .appendTo(document.body)
-                .beam().to(el).at('middle center').end()
-                    .find('.highlight-text')
-                    .beam().to(highlight).at('outer bottom inner left');
-
-            evt.stopPropagation();
-        });
-
-        $('html').on('click', '.highlight', function(evt){
-            var el = $(this);
-            el.hide();
-
-            var eventTarget = $(document.elementFromPoint(evt.pageX, evt.pageY));
-            eventTarget.trigger('click');
-
-            evt.stopPropagation();
-        });
-
-        // dom ready
-        $(function(){
-            highlight.appendTo(document.body).hide();
-        });
-    }(jQuery);
-
-    function startAnimation(){
-        $('.highlight-text')
-            .beam().to(highlight)
-                .at('inner bottom', 0, true)
-                .at('inner right', 0, true)
-                .at('inner top', 0, true)
-                .at('inner left', 0, {complete: startAnimation});
-    }
-
-    function startCachedAnimation(){
-        $('.highlight-text')
-            .beam().to({
-                target: highlight
-            })
-            .at('inner top', 0, {delay: true})
-            .at('inner right', 0, true)
-            .at('inner bottom', 0, {delay: true})
-            .at('inner left', 0, {complete: startCachedAnimation});
-
-    }
-
-    function startCachedAnimationWidthAdditionalAnimation(){
-        $('.highlight-text')
-            .beam().to({
-                target: '.highlight'
-            })
-            .at('inner top', 0, {delay: true})
-            .at('inner right', 0, true, {opacity: 0})
-            .at('inner bottom', 0, {delay: true})
-            .at('inner left', 0, {complete: startCachedAnimationWidthAdditionalAnimation}, {opacity: 1});
-
-    }
-
-    function stopAnimation(){
-        $('.highlight-text').stop(true, true);
-    }
-</script>
-<br /><br />
-<button onclick='startAnimation()'>Start animation</button>
-<button onclick='startCachedAnimation()'>Start delay animation</button>
-<button onclick='startCachedAnimationWidthAdditionalAnimation()'>Start delay animation with custom animation</button>
-<button onclick='stopAnimation()'>stop</button>
 </body>
 </html>

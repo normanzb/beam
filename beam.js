@@ -45,8 +45,17 @@ target - the object of reference for positioning.
 
         // get original position setting
         origData = el.data(KEY_DATA);
-        origPos = origData && origData.position || el.css('position');
+        origPos = origData && origData.position || 
+            { 
+                position: el.css('position'), 
+                left: el.css('left'), 
+                top: el.css('top'), 
+                right: el.css('right'),
+                bottom: el.css('bottom') 
+            };
 
+        el.css('left', el.position().left);
+        el.css('top', el.position().top);
         el.css('position', 'absolute');
 
         targetMarginLeft    = ( parseInt(settings.target.css('marginLeft')) >>> 0 );
@@ -503,10 +512,14 @@ target - the object of reference for positioning.
         unbeam: function() {
             var data = this.data( KEY_DATA );
 
+            if ( !data || !data.position ) {
+                return;
+            }
+
             this.removeData( KEY_INSTANCE );
 
             // restore original position
-            this.css( 'position', data.position );
+            this.css( data.position );
 
             this.removeData( KEY_DATA );
 
