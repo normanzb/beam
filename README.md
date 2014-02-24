@@ -24,7 +24,7 @@ Move element A to the left side of element B
 
     * `option` can be the `jQuery Animation Option` or just `true`, if specified, beam will invoke jQuery.fn.animate internally to move target to position with animation.
 
-        * set `option.dtDelay = true` will delay current animation and do it later with the other animations.
+        * set `option.delay = true` will delay current animation and do it all together with the other animations.
 
     * `additionalProp` additional custom animation properties
 
