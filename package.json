@@ -1,9 +1,9 @@
 {
   "name": "beam",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "beam.js",
   "description": "Position element with respect to another element.",
-  "keywords": "position positioning"
+  "keywords": "position positioning",
   "devDependencies": {
     "requirejs": "~2.1.8",
     "grunt": "~0.4.1",
