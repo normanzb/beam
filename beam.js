@@ -10,7 +10,20 @@ Usage:
 Options:
 target - the object of reference for positioning.
 */
+;(function(Ctor){
+    if ( window.define && window.define.amd == true ){
+        define(function(){
+            return Ctor;
+        });
+    }
+    if ( window.jQuery ) {
+        new Ctor(window.jQuery);
+    }
+})
 (function($){
+    if ( $ == null ) {
+        throw new Error('jQuery is not specified');
+    }
 
     var KEY_DATA = 'jQuery.fn.beam.data';
     var KEY_INSTANCE = 'jQuery.fn.beam.instance';
@@ -529,4 +542,4 @@ target - the object of reference for positioning.
 
     $.fn.extend(pluginMethods);
 
-})(window.jQuery);
+});
