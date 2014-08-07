@@ -60,7 +60,7 @@ target - the object of reference for positioning.
         origData = el.data(KEY_DATA);
         origPos = origData && origData.position || 
             { 
-                position: el.css('position'), 
+                position: el[0].style.position, 
                 left: el.css('left'), 
                 top: el.css('top'), 
                 right: el.css('right'),
