@@ -1,6 +1,6 @@
 {
   "name": "beam",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "beam.js",
   "description": "Position element with respect to another element.",
   "keywords": ["position", "positioning"],
@@ -13,6 +13,5 @@
     "grunt-tagrelease": "~0.2.0"
   },
   "scripts": {
-    "postinstall": "bower install"
   }
 }
