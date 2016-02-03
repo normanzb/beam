@@ -355,14 +355,14 @@ target - the object of reference for positioning.
         viewport.style.bottom = '0';
         viewport.style.margin = '0';
         viewport.style.padding = '0';
-        
+
         viewport.style.display = 'block';
         document.body.appendChild(viewport);
         return viewport;
     }
 
     function disableFauxViewPortDiv() {
-        if (viewport == null) {
+        if (viewport == null || viewport.parentNode == null) {
             return;
         }
         viewport.style.display = 'none';
