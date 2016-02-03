@@ -36,6 +36,7 @@ target - the object of reference for positioning.
         animCacheProp: null,
         enableMargin: false
     };
+    var viewport;
 
     var settingsHolder = {};
 
@@ -327,7 +328,6 @@ target - the object of reference for positioning.
     /**
      * Helpers
      **/
-
     function innerFuncArgumentConcater(funcToCall, args, outerArguments, amongToRemove){
         var outerArgs = Array.prototype.slice.call(outerArguments);
 
@@ -337,18 +337,52 @@ target - the object of reference for positioning.
         funcToCall.apply(this, args);
     };
 
+    function enableFauxViewPortDiv() {
+        if (viewport) {
+            viewport.style.display = 'block';
+            document.body.appendChild(viewport);
+            return viewport;
+        }
+
+        viewport = document.createElement('div');
+        viewport.style.visibility = 'hidden';
+        viewport.style.opacity = '0';
+        viewport.style.pointerEvents = 'none';
+        viewport.style.position = 'fixed';
+        viewport.style.top = '0';
+        viewport.style.left = '0';
+        viewport.style.right = '0';
+        viewport.style.bottom = '0';
+        viewport.style.margin = '0';
+        viewport.style.padding = '0';
+        
+        viewport.style.display = 'block';
+        document.body.appendChild(viewport);
+        return viewport;
+    }
+
+    function disableFauxViewPortDiv() {
+        if (viewport == null) {
+            return;
+        }
+        viewport.style.display = 'none';
+        document.body.removeChild(viewport);
+    }
+
     /**
      * Public methods
      **/
-
     var methods = {
         to: function(another, options){
             if (options == null){
                 options = {};
             }
 
+            if (another === window) {
+                options.target = $(enableFauxViewPortDiv());
+            }
             // another can be option or jQuery obj or jQuery selector
-            if (Object.prototype.toString.call(another).toLowerCase().indexOf('string') > 0 ||
+            else if (Object.prototype.toString.call(another).toLowerCase().indexOf('string') > 0 ||
                 another.length != null && another.attr != null){
                 
                 options.target = another;
@@ -457,6 +491,7 @@ target - the object of reference for positioning.
                 }
             }
 
+            disableFauxViewPortDiv();
         }
     };
 
@@ -528,6 +563,8 @@ target - the object of reference for positioning.
             if ( !data || !data.position ) {
                 return;
             }
+
+            disableFauxViewPortDiv();
 
             this.removeData( KEY_INSTANCE );
 
