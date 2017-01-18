@@ -1,6 +1,6 @@
 {
   "name": "beam",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "beam.js",
   "description": "Position element with respect to another element.",
   "keywords": ["position", "positioning"],

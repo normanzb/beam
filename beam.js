@@ -68,7 +68,7 @@ target - the object of reference for positioning.
                 bottom: el.css('bottom') 
             };
 
-        el.css('left', el.position().left);
+        el.css(el.css('direction')==='rtl'?'right':'left', el.position().left);
         el.css('top', el.position().top);
         el.css('position', 'absolute');
 
