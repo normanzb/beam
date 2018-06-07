@@ -155,10 +155,10 @@ target - the object of reference for positioning.
 
             if (offset != null){
                 if (!isNaN(offset * 1)) {
-                    right -= offset;    
+                    right += offset;    
                 }
                 else if (!isNaN(offset.inline * 1)){
-                    right -= offset.inline
+                    right += offset.inline
                 }
             }
 
@@ -173,10 +173,10 @@ target - the object of reference for positioning.
 
             if (offset != null){
                 if (!isNaN(offset * 1)) {
-                    left -= offset;    
+                    left += offset;    
                 }
                 else if (!isNaN(offset.inline * 1)){
-                    left -= offset.inline
+                    left += offset.inline
                 }
             }
 
