@@ -1,4 +1,4 @@
-#Beam
+# Beam
 
 Position element with respect to another element.
 
@@ -10,17 +10,17 @@ Move element A to the left side of element B
 
 ## API Reference ##
 
-###to
+### to
 
 `to(<jQuery Object>el)` Specify the targetting element, source element will be moved to a position with respect to the target element.
 
-###at
+### at
 
 `at(<String>location, <Number>offset, <jQueryAnimationOption|true> option, <additionaljQueryAnimationProp> additionalProp`) Specify the location of current element (against targetting element).
 
     * `location` could be: (vertical) middle, (horizontal) center, left, right, top, bottom, outer left, outer right, outer top...
 
-    * `offset` Offset { left: 2222, top: 2222 }
+    * `offset` Offset { block: 2222, inline: 2222 }, block means vertical offset, inline means horizontal.
 
     * `option` can be the `jQuery Animation Option` or just `true`, if specified, beam will invoke jQuery.fn.animate internally to move target to position with animation.
 
@@ -28,7 +28,7 @@ Move element A to the left side of element B
 
     * `additionalProp` additional custom animation properties
 
-###end
+### end
 `end()` stop beaming, return the original jQuery object.
 
 ## Known Issue ##

@@ -153,8 +153,13 @@ target - the object of reference for positioning.
             // right to left layout
             var right = parent.outerWidth() - left - el.outerWidth();
 
-            if (offset != null && !isNaN(offset * 1)){
-                right -= offset;
+            if (offset != null){
+                if (!isNaN(offset * 1)) {
+                    right -= offset;    
+                }
+                else if (!isNaN(offset.inline * 1)){
+                    right -= offset.inline
+                }
             }
 
             cssProp = 'right';
@@ -166,8 +171,13 @@ target - the object of reference for positioning.
         }
         else {
 
-            if (offset != null && !isNaN(offset * 1)){
-                left += offset;
+            if (offset != null){
+                if (!isNaN(offset * 1)) {
+                    left -= offset;    
+                }
+                else if (!isNaN(offset.inline * 1)){
+                    left -= offset.inline
+                }
             }
 
             // left to right layout (default)
@@ -189,6 +199,15 @@ target - the object of reference for positioning.
     function setTop(el, top, offset, animOptions, additionalProp){
         var cssProp = 'left', value = 0,
             data = el.data(KEY_DATA);
+
+        if (offset != null){
+            if (!isNaN(offset * 1)) {
+                top += offset;    
+            }
+            else if (!isNaN(offset.block * 1)){
+                top += offset.block
+            }
+        }
 
         if (offset != null && !isNaN(offset * 1)){
             top += offset;
