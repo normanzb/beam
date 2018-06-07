@@ -3,15 +3,16 @@
   "version": "0.0.8",
   "main": "beam.js",
   "description": "Position element with respect to another element.",
-  "keywords": ["position", "positioning"],
+  "keywords": [
+    "position",
+    "positioning"
+  ],
   "devDependencies": {
-    "requirejs": "~2.1.8",
-    "grunt": "~0.4.1",
-    "grunt-bumpup": "~0.2.0",
-    "grunt-contrib-requirejs": ">= 0.3.0",
-    "grunt-contrib-uglify": ">= 0",
-    "grunt-tagrelease": "~0.2.0"
+    "requirejs": "~2.1.8"
   },
   "scripts": {
+    "preversion": "npm i && npm run build",
+    "build": "echo nothing for now",
+    "postversion": "git push && git push --tags"
   }
 }
